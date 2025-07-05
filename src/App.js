@@ -11,6 +11,7 @@ import Contact from './components/Contact';
 import Clients from './components/clients/Clients';
 import Messages from './components/messages/Messages';
 import AccountManagement from './components/accounts/AccountManagement';
+import Reports from './components/reports/Reports';
 import './App.css';
 
 // Configure React Router v7 future flags
@@ -46,6 +47,8 @@ function App() {
               <Route path="messages/:id" element={<Messages />} />
               <Route path="accounts/:id" element={<AccountManagement />} />
               <Route path="accounts" element={<AccountManagement />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="reports/:reportId" element={<Reports />} />
             </Routes>
           </Layout>
         } />
@@ -63,10 +66,13 @@ function App() {
               <Route path="messages/:id" element={<Messages />} />
               <Route path="accounts/:id" element={<AccountManagement />} />
               <Route path="accounts" element={<AccountManagement />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="reports/:reportId" element={<Reports />} />
             </Routes>
           </Layout>
         } />
         <Route path="/properties" element={<Navigate to="/dashboard/properties" replace />} />
+        <Route path="/reports" element={<Navigate to="/dashboard/reports" replace />} />
       </Routes>
     </Router>
   );
