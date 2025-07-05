@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropertyForm from './PropertyForm';
 import PropertyDetails from './PropertyDetails';
 import './Properties.css';
@@ -31,15 +31,15 @@ const Properties = () => {
     const savedProperties = JSON.parse(localStorage.getItem('properties')) || [
       {
         id: 1,
-        title: 'Luxury Villa in City Center',
+        title: 'Luxury Villa',
         type: 'Villa',
         status: 'Available',
-        price: 750000,
+        price: 889000,
         bedrooms: 4,
-        bathrooms: 3,
-        area: 2500,
+        bathrooms: 4,
+        area: 4200,
         location: 'Downtown',
-        amenities: ['pool', 'garden', 'security'],
+        amenities: ['pool', 'garden', 'wifi', 'pet friendly'],
         description: 'Luxurious villa with stunning city views and modern amenities.',
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
         createdAt: new Date().toISOString(),
@@ -47,33 +47,17 @@ const Properties = () => {
       },
       {
         id: 2,
-        title: 'Modern Apartment with View',
-        type: 'Apartment',
-        status: 'Booked',
-        price: 350000,
-        bedrooms: 2,
-        bathrooms: 2,
-        area: 1200,
-        location: 'Suburbs',
-        amenities: ['wifi', 'parking'],
-        description: 'Sleek modern apartment with beautiful city views.',
-        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
-      },
-      {
-        id: 3,
-        title: 'Cozy Family Home',
+        title: 'Modern House',
         type: 'House',
-        status: 'Available',
+        status: 'Sold',
         price: 550000,
         bedrooms: 3,
-        bathrooms: 2,
-        area: 1800,
-        location: 'Residential',
-        amenities: ['garden', 'parking', 'wifi'],
-        description: 'Comfortable family home in a quiet residential area.',
-        image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb',
+        bathrooms: 3,
+        area: 900,
+        location: 'Stone Town',
+        amenities: ['pool', 'pet friendly'],
+        description: 'Sleek modern house with beautiful city views.',
+        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',
         createdAt: new Date().toISOString(),
         lastUpdated: new Date().toISOString()
       }
@@ -101,242 +85,201 @@ const Properties = () => {
     });
   }, [properties, statusFilter, typeFilter, priceFilter, searchQuery]);
 
-  // Handlers
-  const handlePropertyAction = (formData, action) => {
-    switch(action) {
-      case 'add':
-        const newProperty = {
-          ...formData,
-          id: Date.now(),
-          image: 'https://via.placeholder.com/400x300',
-        };
-        const updatedProperties = [...properties, newProperty];
-        setProperties(updatedProperties);
-        setShowForm(false);
-        setEditingProperty(null);
-        break;
-      case 'edit':
-        setProperties(properties.map(p => p.id === formData.id ? formData : p));
-        setShowForm(false);
-        setEditingProperty(null);
-        localStorage.setItem('properties', JSON.stringify(properties));
-        break;
-      case 'delete':
-        setProperties(properties.filter(p => p.id !== formData.id));
-        break;
-      default:
-        console.warn(`Unknown action: ${action}`);
-    }
-  };
-
-  const handleViewDetails = (property) => {
-    setSelectedProperty(property);
-    setShowDetails(true);
-  };
-
-  const handleCloseDetails = useCallback(() => {
-    setShowDetails(false);
-    setSelectedProperty(null);
-  }, []);
-
   // Effects
-  useEffect(() => {
-    if (showDetails && !properties.find(p => p.id === selectedProperty?.id)) {
-      handleCloseDetails();
-    }
-  }, [properties, showDetails, selectedProperty?.id, handleCloseDetails]);
-
   useEffect(() => {
     localStorage.setItem('properties', JSON.stringify(properties));
   }, [properties]);
 
-  // JSX
   return (
     <div className="properties-page">
       <div className="properties-header">
+        <h1>Properties</h1>
         <div className="header-actions">
-          <button className="add-property-btn" onClick={() => setShowForm(true)}>
-            <i className="fas fa-plus"></i> Add New Property
+          <button 
+            className="add-property-btn" 
+            onClick={() => setShowForm(true)}
+          >
+            <i className="fas fa-plus"></i>
+            Add Property
           </button>
-          <div className="header-stats">
-            <div className="stat-item">
-              <i className="fas fa-home"></i>
-              <div>
-                <span className="stat-value">{properties.length}</span>
-                <span className="stat-label">Total Properties</span>
-              </div>
-            </div>
-            <div className="stat-item">
-              <i className="fas fa-check-circle"></i>
-              <div>
-                <span className="stat-value">{properties.filter(p => p.status === 'Available').length}</span>
-                <span className="stat-label">Available</span>
-              </div>
-            </div>
-            <div className="stat-item">
-              <i className="fas fa-clock"></i>
-              <div>
-                <span className="stat-value">{properties.filter(p => p.status === 'Booked').length}</span>
-                <span className="stat-label">Booked</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="properties-filters">
-          <div className="filter-group">
-            <label>Status</label>
-            <select className="status-filter" onChange={(e) => setStatusFilter(e.target.value)}>
-              <option value="all">All Status</option>
-              <option value="available">Available</option>
-              <option value="booked">Booked</option>
-              <option value="sold">Sold</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Type</label>
-            <select className="type-filter" onChange={(e) => setTypeFilter(e.target.value)}>
-              <option value="all">All Types</option>
-              <option value="villa">Villa</option>
-              <option value="apartment">Apartment</option>
-              <option value="house">House</option>
-              <option value="condo">Condo</option>
-            </select>
-          </div>
-          <div className="filter-group">
-            <label>Price Range</label>
-            <input 
-              type="range" 
-              min="0" 
-              max="1000000" 
-              step="10000" 
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value)}
-            />
-            <div className="price-range">
-              <span>${priceFilter.toLocaleString()}</span>
-              <span>$1,000,000</span>
-            </div>
-          </div>
-          <div className="filter-group">
-            <label>Search</label>
-            <div className="search-container">
-              <i className="fas fa-search"></i>
-              <input 
-                type="text" 
-                placeholder="Search properties..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
         </div>
       </div>
+
+      <div className="properties-filters">
+        <div className="filter-group">
+          <label>Status</label>
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Status</option>
+            <option value="available">Available</option>
+            <option value="sold">Sold</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Type</label>
+          <select 
+            value={typeFilter} 
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="all">All Types</option>
+            <option value="villa">Villa</option>
+            <option value="house">House</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Price Range</label>
+          <input 
+            type="number" 
+            value={priceFilter} 
+            onChange={(e) => setPriceFilter(e.target.value)}
+            placeholder="$1,000,000"
+            min="0"
+          />
+        </div>
+
+        <div className="filter-group">
+          <label>Search</label>
+          <input 
+            type="text" 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search properties..."
+          />
+        </div>
+      </div>
+
       <div className="properties-grid">
         {filteredProperties.map((property) => (
-          <div key={property.id} className="property-card">
+          <div 
+            key={property.id} 
+            className="property-card"
+            onClick={() => setSelectedProperty(property)}
+          >
             <div className="property-image">
               <img src={property.image} alt={property.title} />
-              <div className="status-badge {property.status.toLowerCase()}">
+              <div className="property-status">
                 {property.status}
               </div>
-              <div className="property-overlay">
-                <div className="overlay-content">
-                  <h3>{property.title}</h3>
-                  <p className="overlay-price">${property.price.toLocaleString()}</p>
-                  <button className="quick-view-btn" onClick={() => handleViewDetails(property)}>
-                    <i className="fas fa-search"></i> Quick View
-                  </button>
-                </div>
-              </div>
             </div>
-            <div className="property-info">
+            <div className="property-content">
+              <h3>{property.title}</h3>
+              <div className="property-type">
+                {property.type}
+              </div>
+              <div className="property-price">
+                ${property.price.toLocaleString()}
+              </div>
               <div className="property-meta">
-                <span className="property-type">{property.type}</span>
-                <span className="property-location">{property.location}</span>
-              </div>
-              <div className="property-details">
-                <div className="detail-item">
+                <div className="meta-item">
                   <i className="fas fa-bed"></i>
-                  <span>{property.bedrooms} Beds</span>
+                  {property.bedrooms} Beds
                 </div>
-                <div className="detail-item">
+                <div className="meta-item">
                   <i className="fas fa-bath"></i>
-                  <span>{property.bathrooms} Baths</span>
+                  {property.bathrooms} Baths
                 </div>
-                <div className="detail-item">
+                <div className="meta-item">
                   <i className="fas fa-ruler-combined"></i>
-                  <span>{property.area} sqft</span>
+                  {property.area} sqft
                 </div>
               </div>
-              <div className="property-features">
-                {property.amenities?.slice(0, 3).map((amenity, index) => (
-                  <div key={index} className="feature-item">
-                    <i className={`fas ${getAmenityIcon(amenity)}`}></i>
-                    <span>{amenity}</span>
+              <div className="property-amenities">
+                {property.amenities.map((amenity, index) => (
+                  <div 
+                    key={index} 
+                    className="amenity-item"
+                  >
+                    <i className={`fas ${getAmenityIcon(amenity)}`} aria-hidden="true"></i>
+                    {amenity.replace(/\s+/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </div>
                 ))}
               </div>
-              <div className="property-price">
-                <span className="price-label">Price:</span>
-                <span className="price-value">${property.price.toLocaleString()}</span>
-              </div>
-              <div className="property-actions">
-                <button className="action-btn view-btn" onClick={() => handleViewDetails(property)}>
-                  <i className="fas fa-eye"></i> View Details
-                </button>
-                <button className="action-btn edit-btn" onClick={() => {
+            </div>
+            <div className="property-actions">
+              <button 
+                className="action-btn view-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedProperty(property);
+                  setShowDetails(true);
+                }}
+              >
+                <i className="fas fa-eye"></i>
+                Quick View
+              </button>
+              <button 
+                className="action-btn edit-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
                   setEditingProperty(property);
                   setShowForm(true);
-                }}>
-                  <i className="fas fa-edit"></i> Edit
-                </button>
-                <button className="action-btn delete-btn" onClick={() => handlePropertyAction(property, 'delete')}>
-                  <i className="fas fa-trash"></i> Delete
-                </button>
-              </div>
+                }}
+              >
+                <i className="fas fa-edit"></i>
+                Edit
+              </button>
+              <button 
+                className="action-btn delete-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const updatedProperties = properties.filter(p => p.id !== property.id);
+                  setProperties(updatedProperties);
+                  localStorage.setItem('properties', JSON.stringify(updatedProperties));
+                }}
+              >
+                <i className="fas fa-trash"></i>
+                Delete
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Property Form Modal */}
       {showForm && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2>{editingProperty ? 'Edit Property' : 'Add New Property'}</h2>
-              <button className="close-btn" onClick={() => setShowForm(false)}>
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            <PropertyForm
-              property={editingProperty}
-              onSubmit={formData => handlePropertyAction(formData, editingProperty ? 'edit' : 'add')}
+        <div className="property-form-modal">
+          <div className="property-form-content">
+            <PropertyForm 
+              property={editingProperty || null}
               onClose={() => {
                 setShowForm(false);
                 setEditingProperty(null);
+              }}
+              onSave={(newProperty) => {
+                if (editingProperty) {
+                  const updatedProperties = properties.map(p => 
+                    p.id === editingProperty.id ? newProperty : p
+                  );
+                  setProperties(updatedProperties);
+                  localStorage.setItem('properties', JSON.stringify(updatedProperties));
+                } else {
+                  const newProperties = [...properties, newProperty];
+                  setProperties(newProperties);
+                  localStorage.setItem('properties', JSON.stringify(newProperties));
+                }
+                setShowForm(false);
               }}
             />
           </div>
         </div>
       )}
 
-      {/* Property Details Modal */}
       {showDetails && selectedProperty && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2>{selectedProperty.title}</h2>
-              <button className="close-btn" onClick={handleCloseDetails}>
-                <i className="fas fa-times"></i>
-              </button>
-            </div>
-            <PropertyDetails property={selectedProperty} onClose={handleCloseDetails} />
-          </div>
+        <div className="property-details-modal">
+          <PropertyDetails 
+            property={selectedProperty}
+            onClose={() => {
+              setShowDetails(false);
+              setSelectedProperty(null);
+            }}
+          />
         </div>
       )}
     </div>
   );
 };
 
-export default Properties;
+export default Properties
