@@ -90,6 +90,28 @@ const Properties = () => {
     localStorage.setItem('properties', JSON.stringify(properties));
   }, [properties]);
 
+  // Handlers
+  const handlePropertySave = (propertyData) => {
+    if (editingProperty) {
+      // Update existing property
+      const updatedProperties = properties.map(p => 
+        p.id === editingProperty.id ? { ...p, ...propertyData } : p
+      );
+      setProperties(updatedProperties);
+    } else {
+      // Add new property
+      const newProperty = {
+        ...propertyData,
+        id: Date.now(),
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+      };
+      setProperties([...properties, newProperty]);
+    }
+    setShowForm(false);
+    setEditingProperty(null);
+  };
+
   return (
     <div className="properties-page">
       <div className="properties-header">
@@ -248,20 +270,7 @@ const Properties = () => {
                 setShowForm(false);
                 setEditingProperty(null);
               }}
-              onSave={(newProperty) => {
-                if (editingProperty) {
-                  const updatedProperties = properties.map(p => 
-                    p.id === editingProperty.id ? newProperty : p
-                  );
-                  setProperties(updatedProperties);
-                  localStorage.setItem('properties', JSON.stringify(updatedProperties));
-                } else {
-                  const newProperties = [...properties, newProperty];
-                  setProperties(newProperties);
-                  localStorage.setItem('properties', JSON.stringify(newProperties));
-                }
-                setShowForm(false);
-              }}
+              onSubmit={handlePropertySave}
             />
           </div>
         </div>

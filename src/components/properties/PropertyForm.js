@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './PropertyForm.css';
-import { v4 as uuidv4 } from 'uuid';
 
 const PropertyForm = ({ onClose, onSubmit, property = null }) => {
   const [formData, setFormData] = useState(property || {
@@ -90,14 +89,18 @@ const PropertyForm = ({ onClose, onSubmit, property = null }) => {
       alert('Please upload a property image.');
       return;
     }
-    onSubmit({
+
+    const propertyData = {
       ...formData,
       amenities,
       price: parseFloat(formData.price),
       bedrooms: parseInt(formData.bedrooms),
       bathrooms: parseInt(formData.bathrooms),
       area: parseInt(formData.area)
-    });
+    };
+
+    onSubmit(propertyData);
+    onClose();
   };
 
   useEffect(() => {
@@ -110,214 +113,278 @@ const PropertyForm = ({ onClose, onSubmit, property = null }) => {
     }
   }, [property]);
 
-  const amenitiesList = [
-    'Pool', 'Garden', 'Security', 'Parking', 'WiFi', 'Gym', 'Balcony', 'Pet Friendly'
-  ];
-
-  const amenityIcons = [
-    'fa-swimming-pool', 'fa-tree', 'fa-shield-alt', 'fa-parking', 'fa-wifi', 'fa-dumbbell', 'fa-window-maximize', 'fa-paw'
-  ];
-
   return (
     <div className="property-form-modal">
-      <div className="property-form">
-        <div className="form-header">
-          <h2>{property ? 'Edit Property' : 'Add New Property'}</h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="property-form-content">
-          <div className="form-section">
-            <h3>Basic Information</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Property title"
-                  required
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label>Type</label>
-                <select 
-                  name="type"
-                  value={formData.type}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                >
-                  <option value="">Select type</option>
-                  <option value="villa">Villa</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="house">House</option>
-                  <option value="condo">Condo</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Status</label>
-                <select 
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                >
-                  <option value="available">Available</option>
-                  <option value="booked">Booked</option>
-                  <option value="sold">Sold</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Location & Pricing</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label>Price ($)</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Property Details</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Bedrooms</label>
-                <input
-                  type="number"
-                  name="bedrooms"
-                  value={formData.bedrooms}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label>Bathrooms</label>
-                <input
-                  type="number"
-                  name="bathrooms"
-                  value={formData.bathrooms}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label>Area (sqft)</label>
-                <input
-                  type="number"
-                  name="area"
-                  value={formData.area}
-                  onChange={handleChange}
-                  required
-                  className="form-control"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Description</h3>
-            <div className="form-group">
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="4"
-                required
-                className="form-control"
-                placeholder="Enter property description..."
-              ></textarea>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Amenities</h3>
-            <div className="amenities-grid">
-              {amenitiesList.map((amenity, index) => (
-                <div key={index} className="amenity-item">
-                  <input
-                    type="checkbox"
-                    id={`amenity-${uuidv4()}`}
-                    value={amenity}
-                    checked={amenities.includes(amenity)}
-                    onChange={handleAmenityChange}
-                    className="amenity-checkbox"
-                  />
-                  <label htmlFor={`amenity-${uuidv4()}`} className="amenity-label">
-                    <i className={`fas ${amenityIcons[index]}`} style={{ marginRight: '8px' }}></i>
-                    {amenity}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3>Property Image</h3>
-            <div 
-              className="image-upload-container"
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
+      <div className="property-form-content">
+        <form onSubmit={handleSubmit} className="property-form">
+          <div className="form-header">
+            <h2>{property ? 'Edit Property' : 'Add New Property'}</h2>
+            <button 
+              type="button" 
+              className="close-btn" 
+              onClick={onClose}
             >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div className="form-group">
+            <label>Title</label>
+            <input 
+              type="text" 
+              name="title" 
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Type</label>
+            <select 
+              name="type" 
+              value={formData.type}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Property Type</option>
+              <option value="villa">Villa</option>
+              <option value="house">House</option>
+              <option value="apartment">Apartment</option>
+              <option value="land">Land</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Status</label>
+            <select 
+              name="status" 
+              value={formData.status}
+              onChange={handleChange}
+              required
+            >
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+              <option value="booked">Booked</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Price ($)</label>
+            <input 
+              type="number" 
+              name="price" 
+              value={formData.price}
+              onChange={handleChange}
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Bedrooms</label>
+            <input 
+              type="number" 
+              name="bedrooms" 
+              value={formData.bedrooms}
+              onChange={handleChange}
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Bathrooms</label>
+            <input 
+              type="number" 
+              name="bathrooms" 
+              value={formData.bathrooms}
+              onChange={handleChange}
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Area (sqft)</label>
+            <input 
+              type="number" 
+              name="area" 
+              value={formData.area}
+              onChange={handleChange}
+              required
+              min="0"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Description</label>
+            <textarea 
+              name="description" 
+              value={formData.description}
+              onChange={handleChange}
+              required
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div className="form-group">
+            <label>Location</label>
+            <input 
+              type="text" 
+              name="location" 
+              value={formData.location}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Property Image</label>
+            <div className="image-upload-container">
               {formData.previewImage ? (
-                <div className="image-preview">
+                <div className="preview-image">
                   <img src={formData.previewImage} alt="Preview" />
-                  <button type="button" onClick={() => setFormData(prev => ({
-                    ...prev,
-                    image: null,
-                    previewImage: null
-                  }))} className="remove-image-btn">
-                    Remove Image
+                  <button 
+                    type="button" 
+                    className="remove-image-btn" 
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        image: null,
+                        previewImage: null
+                      }));
+                    }}
+                  >
+                    <i className="fas fa-times"></i>
                   </button>
                 </div>
               ) : (
-                <div className="upload-placeholder">
-                  <i className="fas fa-cloud-upload-alt"></i>
-                  <p>Drag and drop an image or click to upload</p>
-                  <input
-                    type="file"
+                <div className="upload-area" 
+                     onDragOver={handleDragOver}
+                     onDrop={handleDrop}
+                >
+                  <input 
+                    type="file" 
+                    name="image" 
                     accept="image/jpeg,image/png,image/webp"
                     onChange={handleImageChange}
-                    className="file-input"
                   />
+                  <p>Drag and drop an image or click to select</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="form-buttons">
-            <button type="submit" className="submit-btn">
-              {property ? 'Update Property' : 'Add Property'}
-            </button>
-            <button type="button" onClick={onClose} className="cancel-btn">
+          <div className="form-group amenities-group">
+            <label>Amenities</label>
+            <div className="amenities-list">
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="pool" 
+                  checked={amenities.includes('pool')}
+                  onChange={handleAmenityChange}
+                />
+                Pool
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="garden" 
+                  checked={amenities.includes('garden')}
+                  onChange={handleAmenityChange}
+                />
+                Garden
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="parking" 
+                  checked={amenities.includes('parking')}
+                  onChange={handleAmenityChange}
+                />
+                Parking
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="wifi" 
+                  checked={amenities.includes('wifi')}
+                  onChange={handleAmenityChange}
+                />
+                WiFi
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="gym" 
+                  checked={amenities.includes('gym')}
+                  onChange={handleAmenityChange}
+                />
+                Gym
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="balcony" 
+                  checked={amenities.includes('balcony')}
+                  onChange={handleAmenityChange}
+                />
+                Balcony
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="pet friendly" 
+                  checked={amenities.includes('pet friendly')}
+                  onChange={handleAmenityChange}
+                />
+                Pet Friendly
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="ac" 
+                  checked={amenities.includes('ac')}
+                  onChange={handleAmenityChange}
+                />
+                AC
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="laundry" 
+                  checked={amenities.includes('laundry')}
+                  onChange={handleAmenityChange}
+                />
+                Laundry
+              </label>
+              <label className="amenity-item">
+                <input 
+                  type="checkbox" 
+                  value="kitchen" 
+                  checked={amenities.includes('kitchen')}
+                  onChange={handleAmenityChange}
+                />
+                Kitchen
+              </label>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button 
+              type="button" 
+              className="cancel-btn" 
+              onClick={onClose}
+            >
               Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="submit-btn"
+            >
+              {property ? 'Update Property' : 'Add Property'}
             </button>
           </div>
         </form>
