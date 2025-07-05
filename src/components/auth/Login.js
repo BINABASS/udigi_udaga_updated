@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import { validateCredentials } from '../../data/users';
 import './Login.css';
 
 const Login = () => {
@@ -11,7 +12,6 @@ const Login = () => {
   });
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const [selectedRole, setSelectedRole] = useState('admin');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,16 +22,20 @@ const Login = () => {
     }
 
     try {
-      // Simulate login with selected role
-      login({
-        email: formData.email,
-        role: selectedRole
-      });
+      // Validate credentials against predefined users
+      const user = validateCredentials(formData.email, formData.password);
+      if (!user) {
+        setError('Invalid email or password');
+        return;
+      }
+
+      // Login with validated user data
+      login(user);
       
-      // Redirect based on role
-      if (selectedRole === 'admin') {
+      // Redirect based on user's role
+      if (user.role === 'admin') {
         navigate('/dashboard');
-      } else if (selectedRole === 'seller') {
+      } else if (user.role === 'seller') {
         navigate('/seller');
       }
     } catch (error) {
@@ -53,6 +57,7 @@ const Login = () => {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
+              placeholder="Enter your email"
             />
           </div>
           <div className="form-group">
@@ -63,19 +68,8 @@ const Login = () => {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
+              placeholder="Enter your password"
             />
-          </div>
-          <div className="form-group">
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              required
-            >
-              <option value="admin">Admin</option>
-              <option value="seller">Seller</option>
-            </select>
           </div>
           <button type="submit" className="primary-button">Login</button>
         </form>
