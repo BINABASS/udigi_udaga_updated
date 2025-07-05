@@ -17,25 +17,42 @@ const Booking = () => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState(BOOKING_STATUSES.ALL);
 
   useEffect(() => {
-    // Load properties from localStorage
-    const savedProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    
-    // Add booking-specific fields to properties
-    const propertiesWithBookings = savedProperties.map(property => ({
-      ...property,
-      bookingDate: property.bookingDate || new Date().toISOString().split('T')[0],
-      clientName: property.clientName || 'Client Name',
-      duration: property.duration || 12,
-      status: property.status || 'Booked'
-    }));
-
-    setProperties(propertiesWithBookings);
+    const savedProperties = JSON.parse(localStorage.getItem('properties')) || [
+      {
+        id: 1,
+        title: 'Luxury Villa Booking',
+        type: 'Villa',
+        status: 'Booked',
+        bookingDate: '2025-08-01',
+        clientName: 'John Smith',
+        duration: 12,
+        price: 750000,
+        location: 'Downtown',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+      },
+      {
+        id: 2,
+        title: 'Modern Apartment Booking',
+        type: 'Apartment',
+        status: 'Upcoming',
+        bookingDate: '2025-09-15',
+        clientName: 'Tech Solutions Inc.',
+        duration: 6,
+        price: 350000,
+        location: 'Suburbs',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+      }
+    ];
+    setProperties(savedProperties);
     setIsLoading(false);
   }, []);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState(BOOKING_STATUSES.ALL);
 
   // Calculate statistics
   const statistics = useMemo(() => {
@@ -53,7 +70,9 @@ const Booking = () => {
         const endDate = new Date(bookingDate);
         endDate.setMonth(endDate.getMonth() + p.duration);
         return bookingDate < today && endDate > today;
-      }).length
+      }).length,
+      villas: properties.filter(p => p.type === 'Villa').length,
+      apartments: properties.filter(p => p.type === 'Apartment').length
     };
   }, [properties]);
 

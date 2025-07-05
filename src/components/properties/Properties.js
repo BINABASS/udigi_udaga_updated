@@ -42,6 +42,8 @@ const Properties = () => {
         amenities: ['pool', 'garden', 'security'],
         description: 'Luxurious villa with stunning city views and modern amenities.',
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
       },
       {
         id: 2,
@@ -56,6 +58,8 @@ const Properties = () => {
         amenities: ['wifi', 'parking'],
         description: 'Sleek modern apartment with beautiful city views.',
         image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
       },
       {
         id: 3,
@@ -70,17 +74,20 @@ const Properties = () => {
         amenities: ['garden', 'parking', 'wifi'],
         description: 'Comfortable family home in a quiet residential area.',
         image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
       }
     ];
     return savedProperties;
   });
 
-  const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [priceFilter, setPriceFilter] = useState(1000000);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const filterProperties = useCallback(() => {
+  // Filter properties
+  const filteredProperties = useMemo(() => {
     return properties.filter(property => {
       const matchesStatus = statusFilter === 'all' || property.status.toLowerCase() === statusFilter.toLowerCase();
       const matchesType = typeFilter === 'all' || property.type.toLowerCase() === typeFilter.toLowerCase();
@@ -93,8 +100,6 @@ const Properties = () => {
       return matchesStatus && matchesType && matchesPrice && matchesSearch;
     });
   }, [properties, statusFilter, typeFilter, priceFilter, searchQuery]);
-
-  const filteredProperties = useMemo(() => filterProperties(), [filterProperties]);
 
   // Handlers
   const handlePropertyAction = (formData, action) => {

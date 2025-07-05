@@ -12,7 +12,9 @@ import Clients from './components/clients/Clients';
 import Messages from './components/messages/Messages';
 import AccountManagement from './components/accounts/AccountManagement';
 import Reports from './components/reports/Reports';
+import { Toaster } from './components/ui/Toaster';
 import './App.css';
+import './components/ui/uiComponents.css';
 
 // Configure React Router v7 future flags
 const routerConfig = {
@@ -25,6 +27,7 @@ const routerConfig = {
 function App() {
   return (
     <Router future={routerConfig.future}>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
