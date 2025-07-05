@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import './Reports.css';
 
@@ -9,7 +9,26 @@ const REPORT_TYPES = [
   { id: 3, name: 'Client Distribution', description: 'Client distribution analysis' }
 ];
 
-const ReportDetails = ({ report }) => {
+const ReportDetails = ({ report, onDownload, onPrint, onDelete }) => {
+  // Chart references
+  const revenueChartRef = useRef(null);
+  const propertyChartRef = useRef(null);
+  const clientChartRef = useRef(null);
+
+  // Cleanup charts on unmount
+  useEffect(() => {
+    return () => {
+      if (revenueChartRef.current) {
+        revenueChartRef.current.destroy();
+      }
+      if (propertyChartRef.current) {
+        propertyChartRef.current.destroy();
+      }
+      if (clientChartRef.current) {
+        clientChartRef.current.destroy();
+      }
+    };
+  }, []);
   // Sample chart data - will be replaced with actual data from the report
   const chartData = {
     revenue: {
@@ -33,62 +52,93 @@ const ReportDetails = ({ report }) => {
           'rgba(245, 158, 11, 0.7)'
         ]
       }]
+    },
+    client: {
+      labels: ['Client A', 'Client B', 'Client C', 'Client D'],
+      datasets: [{
+        data: [30, 20, 45, 5],
+        backgroundColor: [
+          'rgba(79, 70, 229, 0.7)',
+          'rgba(220, 38, 38, 0.7)',
+          'rgba(34, 197, 94, 0.7)',
+          'rgba(245, 158, 11, 0.7)'
+        ]
+      }]
     }
   };
 
   useEffect(() => {
-    // Initialize charts when report data changes
-    const ctx1 = document.getElementById('revenueChart');
-    const ctx2 = document.getElementById('propertyChart');
-    const ctx3 = document.getElementById('clientChart');
+    // Update charts when report data changes
+    if (!report) return;
 
-    if (ctx1) {
-      new Chart(ctx1, {
-        type: 'line',
-        data: chartData.revenue,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
+    // Cleanup existing charts
+    if (revenueChartRef.current) {
+      revenueChartRef.current.destroy();
+    }
+    if (propertyChartRef.current) {
+      propertyChartRef.current.destroy();
+    }
+    if (clientChartRef.current) {
+      clientChartRef.current.destroy();
     }
 
-    if (ctx2) {
-      new Chart(ctx2, {
-        type: 'bar',
-        data: chartData.property,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
+    // Revenue chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    revenueChartRef.current = new Chart(revenueCtx, {
+      type: 'line',
+      data: chartData.revenue,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
           },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+          title: {
+            display: true,
+            text: 'Revenue Trend'
           }
         }
-      });
-    }
+      }
+    });
 
-    // Clean up
-    return () => {
-      if (ctx1?.chart) ctx1.chart.destroy();
-      if (ctx2?.chart) ctx2.chart.destroy();
-      if (ctx3?.chart) ctx3.chart.destroy();
-    };
-  }, [report, chartData.revenue, chartData.property]);
+    // Property performance chart
+    const propertyCtx = document.getElementById('propertyChart').getContext('2d');
+    propertyChartRef.current = new Chart(propertyCtx, {
+      type: 'bar',
+      data: chartData.property,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Property Performance'
+          }
+        }
+      }
+    });
+
+    // Client distribution chart
+    const clientCtx = document.getElementById('clientChart').getContext('2d');
+    clientChartRef.current = new Chart(clientCtx, {
+      type: 'pie',
+      data: chartData.client,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Client Distribution'
+          }
+        }
+      }
+    });
+  }, [report, chartData.revenue, chartData.property, chartData.client]);
 
   // Get report type name
   const reportType = REPORT_TYPES.find(type => type.id === report?.type);
@@ -120,8 +170,27 @@ const ReportDetails = ({ report }) => {
         </div>
 
         <div className="report-actions">
-          <button className="download-btn">Download Report</button>
-          <button className="print-btn">Print Report</button>
+          <button 
+            className="download-btn" 
+            onClick={() => onDownload(report)}
+            title="Download report as JSON"
+          >
+            <i className="fas fa-download"></i> Download Report
+          </button>
+          <button 
+            className="print-btn" 
+            onClick={() => onPrint(report)}
+            title="Print report"
+          >
+            <i className="fas fa-print"></i> Print Report
+          </button>
+          <button 
+            className="delete-btn" 
+            onClick={() => onDelete(report.id)}
+            title="Delete report"
+          >
+            <i className="fas fa-trash"></i> Delete Report
+          </button>
         </div>
       </div>
     </div>

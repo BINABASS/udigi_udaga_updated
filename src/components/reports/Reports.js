@@ -69,7 +69,102 @@ const Reports = () => {
       const updatedReports = reports.filter(report => report.id !== reportId);
       setReports(updatedReports);
       localStorage.setItem('reports', JSON.stringify(updatedReports));
+      setSelectedReport(null);
+      window.location.href = '/dashboard/reports'; // Redirect back to reports list
     }
+  };
+
+  const handleDownloadReport = (report) => {
+    const reportData = {
+      name: report.name,
+      type: report.type,
+      startDate: report.startDate,
+      endDate: report.endDate,
+      dateGenerated: report.date,
+      properties: report.properties,
+      clients: report.clients
+    };
+
+    // Convert report data to JSON string
+    const reportJson = JSON.stringify(reportData, null, 2);
+    const blob = new Blob([reportJson], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${report.name}.json`;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  const handlePrintReport = (report) => {
+    // Create a temporary print window
+    const printWindow = window.open('', '_blank');
+    
+    // Create HTML content for printing
+    const printContent = `
+      <html>
+        <head>
+          <title>${report.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .report-header { text-align: center; margin-bottom: 20px; }
+            .report-info { margin: 20px 0; }
+            .report-data { margin-top: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { padding: 8px; border: 1px solid #ddd; }
+          </style>
+        </head>
+        <body>
+          <div class="report-header">
+            <h1>${report.name}</h1>
+            <p>Generated on ${report.date}</p>
+          </div>
+          
+          <div class="report-info">
+            <p><strong>Type:</strong> ${report.type}</p>
+            <p><strong>Period:</strong> ${report.startDate} - ${report.endDate}</p>
+          </div>
+          
+          <div class="report-data">
+            <h2>Properties</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${report.properties.map(prop => `
+                  <tr>
+                    <td>${prop.name}</td>
+                    <td>${prop.location}</td>
+                    <td>${prop.status}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
+      </html>
+    `;
+
+    // Write content to print window
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    // Print after a small delay
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   const handleViewReport = (report) => {
@@ -79,7 +174,15 @@ const Reports = () => {
 
   if (reportId) {
     // If we have a reportId in the URL, show the report details
-    return <ReportDetails report={reports.find(r => r.id === reportId)} />;
+    const selectedReport = reports.find(r => r.id === reportId);
+    return (
+      <ReportDetails 
+        report={selectedReport}
+        onDownload={handleDownloadReport}
+        onPrint={handlePrintReport}
+        onDelete={handleDeleteReport}
+      />
+    );
   }
 
   return (
