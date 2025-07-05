@@ -170,26 +170,31 @@ const ReportDetails = ({ report, onDownload, onPrint, onDelete }) => {
         </div>
 
         <div className="report-actions">
+          <div className="action-group">
+            <button 
+              className="action-btn download-btn" 
+              onClick={() => onDownload(report)}
+              title="Download report as JSON"
+            >
+              <i className="fas fa-download"></i>
+              <span>Download</span>
+            </button>
+            <button 
+              className="action-btn print-btn" 
+              onClick={() => onPrint(report)}
+              title="Print report"
+            >
+              <i className="fas fa-print"></i>
+              <span>Print</span>
+            </button>
+          </div>
           <button 
-            className="download-btn" 
-            onClick={() => onDownload(report)}
-            title="Download report as JSON"
-          >
-            <i className="fas fa-download"></i> Download Report
-          </button>
-          <button 
-            className="print-btn" 
-            onClick={() => onPrint(report)}
-            title="Print report"
-          >
-            <i className="fas fa-print"></i> Print Report
-          </button>
-          <button 
-            className="delete-btn" 
+            className="action-btn delete-btn" 
             onClick={() => onDelete(report.id)}
             title="Delete report"
           >
-            <i className="fas fa-trash"></i> Delete Report
+            <i className="fas fa-trash"></i>
+            <span>Delete</span>
           </button>
         </div>
       </div>

@@ -231,22 +231,8 @@ const Reports = () => {
               <div className="report-actions">
                 <button className="download-btn">
                   <i className="fas fa-download"></i>
-                  Download
+                  View
                 </button>
-                <button className="print-btn">
-                  <i className="fas fa-print"></i>
-                  Print
-                </button>
-                <button 
-                  className="delete-btn"
-                  onClick={() => {
-                  const updatedReports = reports.filter(r => r.id !== report.id);
-                  setReports(updatedReports);
-                  localStorage.setItem('reports', JSON.stringify(updatedReports));
-                }}
-              >
-                <i className="fas fa-trash"></i> Delete
-              </button>
               </div>
             </div>
           ))
