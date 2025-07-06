@@ -37,6 +37,8 @@ const Login = () => {
         navigate('/dashboard');
       } else if (user.role === 'seller') {
         navigate('/seller');
+      } else if (user.role === 'buyer') {
+        navigate('/buyer');
       }
     } catch (error) {
       setError(error.message);

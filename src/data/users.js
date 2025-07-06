@@ -3,7 +3,7 @@ export const users = {
   // Admin credentials
   'admin@udigi.com': {
     email: 'admin@udigi.com',
-    password: 'admin123',
+    password: 'admin999',
     role: 'admin',
     name: 'System Administrator'
   },
@@ -21,6 +21,27 @@ export const users = {
     password: 'seller123',
     role: 'seller',
     name: 'Jane Smith'
+  },
+
+  // Buyer credentials
+  'buyer1@udigi.com': {
+    email: 'buyer1@udigi.com',
+    password: 'buyer123',
+    role: 'buyer',
+    name: 'Michael Johnson'
+  },
+  'buyer2@udigi.com': {
+    email: 'buyer2@udigi.com',
+    password: 'buyer123',
+    role: 'buyer',
+    name: 'Sarah Wilson'
+  },
+
+  'binos@udigi.com': {
+    email: 'binos@udigi.com',
+    password: 'binos123',
+    role: 'seller',
+    name: 'Binos'
   }
 };
 

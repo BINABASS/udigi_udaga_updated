@@ -19,8 +19,13 @@ import { Toaster } from './components/ui/Toaster';
 import './App.css';
 import './components/ui/uiComponents.css';
 import SellerLayout from './components/layout/SellerLayout';
+import BuyerLayout from './components/layout/BuyerLayout';
 import SellerRegistration from './components/sellers/SellerRegistration';
 import SellerDetails from './components/sellers/SellerDetails';
+import BuyerDashboard from './components/dashboard/buyer/BuyerDashboard';
+import Favorites from './components/buyer/Favorites';
+import SavedSearches from './components/buyer/SavedSearches';
+import Profile from './components/buyer/Profile';
 
 // Configure React Router v7 future flags
 const routerConfig = {
@@ -82,6 +87,22 @@ function App() {
                   <Route path="settings" element={<AccountManagement />} />
                 </Routes>
               </SellerLayout>
+            </ProtectedRoute>
+          } />
+
+          {/* Buyer Dashboard Routes */}
+          <Route path="/buyer" element={
+            <ProtectedRoute allowedRoles={['buyer']}>
+              <BuyerLayout>
+                <Routes>
+                  <Route index element={<BuyerDashboard />} />
+                  <Route path="dashboard" element={<BuyerDashboard />} />
+                  <Route path="properties" element={<Properties />} />
+                  <Route path="favorites" element={<Favorites />} />
+                  <Route path="saved-searches" element={<SavedSearches />} />
+                  <Route path="profile" element={<Profile />} />
+                </Routes>
+              </BuyerLayout>
             </ProtectedRoute>
           } />
 

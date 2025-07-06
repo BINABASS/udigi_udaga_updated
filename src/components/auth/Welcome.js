@@ -30,7 +30,7 @@ const Welcome = () => {
         </div>
 
         <div className="welcome-buttons">
-          <Link to="/login" className="cta-button primary">Admin Login</Link>
+          <Link to="/login" className="cta-button primary">Login with your role</Link>
           <Link to="/contact" className="cta-button secondary">Contact Us</Link>
         </div>
       </div>
