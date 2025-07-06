@@ -44,13 +44,14 @@ function App() {
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/clients" element={<Navigate to="/dashboard/clients" replace />} />
-          <Route path="/messages" element={<Navigate to="/dashboard/messages" replace />} />
-          <Route path="/accounts" element={<Navigate to="/dashboard/accounts" replace />} />
+          <Route path="/contact" element={
+            <Layout>
+              <Contact />
+            </Layout>
+          } />
 
           {/* Admin Dashboard Routes */}
-          <Route path="/dashboard" element={
+          <Route path="/dashboard/*" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <Layout>
                 <Routes>
@@ -58,13 +59,12 @@ function App() {
                   <Route path="properties" element={<Properties />} />
                   <Route path="booking/:id" element={<Booking />} />
                   <Route path="booking" element={<Booking />} />
-                  <Route path="bookings" element={<Navigate to="/dashboard/booking" replace />} />
                   <Route path="clients" element={<Clients />} />
                   <Route path="clients/:id" element={<Clients />} />
                   <Route path="messages" element={<Messages />} />
                   <Route path="messages/:id" element={<Messages />} />
-                  <Route path="accounts/:id" element={<AccountManagement />} />
                   <Route path="accounts" element={<AccountManagement />} />
+                  <Route path="accounts/:id" element={<AccountManagement />} />
                   <Route path="reports" element={<Reports />} />
                   <Route path="reports/:reportId" element={<Reports />} />
                   <Route path="sellers" element={<SellerRegistration />} />

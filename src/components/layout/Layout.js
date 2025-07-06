@@ -8,11 +8,11 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { path: '/dashboard', icon: 'fas fa-chart-line', text: 'Dashboard' },
-    { path: '/properties', icon: 'fas fa-home', text: 'Properties' },
+    { path: '/dashboard/properties', icon: 'fas fa-home', text: 'Properties' },
     { path: '/dashboard/booking', icon: 'fas fa-calendar', text: 'Bookings' },
-    { path: '/clients', icon: 'fas fa-users', text: 'Clients' },
-    { path: '/messages', icon: 'fas fa-envelope', text: 'Messages' },
-    { path: '/reports', icon: 'fas fa-chart-bar', text: 'Reports' },
+    { path: '/dashboard/clients', icon: 'fas fa-users', text: 'Clients' },
+    { path: '/dashboard/messages', icon: 'fas fa-envelope', text: 'Messages' },
+    { path: '/dashboard/reports', icon: 'fas fa-chart-bar', text: 'Reports' },
     { path: '/contact', icon: 'fas fa-phone', text: 'Contact' },
   ];
 
@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`nav-link ${currentPath.startsWith(item.path) ? 'active' : ''}`}
+                  className={`nav-link ${currentPath === item.path ? 'active' : ''}`}
                 >
                   <i className={item.icon}></i>
                   <span>{item.text}</span>
